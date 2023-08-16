@@ -1,0 +1,34 @@
+# Instal WSL Fetch and setup a nice looking startup screen
+
+u=$(ls /home)
+D=$(cat /etc/os-release | awk -F '"' 'NR==2{print $2}')
+V=$(cat /etc/os-release | awk -F '=' 'NR==5{print $2}')
+MOTD="/etc/update-motd.d"
+FN="10-wslfetch"
+
+# Install WSLUtilities
+if grep -qi "Debian" <<< "$D"; then
+	apt install gnupg2 apt-transport-https
+	echo "deb https://pkg.wslutiliti.es/debian "$V" main" | sudo tee -a /etc/apt/sources.list
+	wget -O - https://pkg.wslutiliti.es/public.key | sudo tee -a /etc/apt/trusted.gpg.d/wslu.asc
+elif grep -qi "Ubuntu" <<< "$D"; then
+	add-apt-repository ppa:wslutilities/wslu -y
+fi
+apt update
+apt install wslu -y
+
+# Install WSLFetch as motd
+if [ -d "$MOTD" ];
+then
+	mv "$MOTD" "$MOTD/../update-motd.d.backup"
+fi
+mkdir -m655 $MOTD
+echo -e "#!/bin/sh\n/usr/bin/wslfetch" > "$MOTD/$FN"
+chmod 655 $MOTD/$FN
+
+# Enable display of MOTD
+# Add this /etc/skel if wanted for future users
+for i in $u
+do
+	echo -e "\nrun-parts /etc/update-motd.d 2>/dev/null" >> "/home/$i/.bashrc"
+done

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# This script is for installing necessary components to enable NVidia CUDA Toolkit on Debian.
+# Josh and Mitch's laptops are equipped with a compatible GPUs that enable GPU accelerated Numpy and Pandas via Rapids AI.
+# As of 08/16/2023, the highest CUDA toolkit version supported for Rapids is 11.8, which may require uninstalling all NVidia drivers and downgrading to supported CUDA Toolkit.
+#
+### Untested on Ubuntu ###
+
+
+wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
+dpkg -i cuda-keyring_1.0-1_all.deb
+add-apt-repository contrib -y
+add-apt-repository non-free -y
+apt update
+apt install nvidia-cuda-toolkit -y

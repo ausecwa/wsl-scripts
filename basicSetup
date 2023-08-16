@@ -1,0 +1,29 @@
+# Get users, distribution, and version names plus some other variables
+u=$(ls /home)
+D=$(cat /etc/os-release | awk -F '"' 'NR==2{print $2}')
+V=$(cat /etc/os-release | awk -F '=' 'NR==5{print $2}')
+
+# Basic update and install
+apt update
+apt upgrade -y
+apt install software-properties-common ssh git wget rsync vim -y
+
+### Disable ufw if we're on Ubuntu because I'm lazy
+#if grep -qi "Ubuntu" <<< "$D"; then
+#        systemctl disable ufw
+#fi
+
+# Disable bell sound
+echo -e "set bell-style none" >> /etc/inputrc
+
+# Disable ipv6
+echo -e "\nnet.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+
+# Enable systemd
+echo -e "[boot]\nsystemd=true" > /etc/wsl.conf
+
+# AO 08/12/2023, enabling systemd breaks .exe execution. The following line fixes it.
+echo -e ":WSLInterop:M::MZ::/init:PF" > /usr/lib/binfmt.d/WSLInterop.conf
+
+# Shut this down, let things take effect
+/mnt/c/Windows/system32/wsl.exe --shutdown

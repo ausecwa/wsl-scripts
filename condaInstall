@@ -1,0 +1,12 @@
+# Install and update conda 
+# Creates an environment named 'basic' for general use
+# Assuming only one other user in the home folder
+
+u=$(ls /home)
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /home/"$u"
+su - "$u" -c 'bash Miniconda3-latest-Linux-x86_64.sh -b'
+su - "$u" -c 'miniconda3/bin/conda init'
+su - "$u" -c 'miniconda3/bin/conda update conda -y'
+su - "$u" -c 'miniconda3/bin/conda create -n basic ipykernel numpy scipy pandas matplotlib -c conda-forge -y'
+su - "$u" -c 'rm -rf Miniconda3-latest-Linux-x86_64.sh'
